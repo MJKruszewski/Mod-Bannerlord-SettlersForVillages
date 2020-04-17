@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29911.84
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettlersForVillages", "SettlersForVillages\SettlersForVillages.csproj", "{73954050-8137-4624-980B-CE0B8CBFE43C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+		Win64_Shipping_Client|Any CPU = Win64_Shipping_Client|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{73954050-8137-4624-980B-CE0B8CBFE43C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73954050-8137-4624-980B-CE0B8CBFE43C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73954050-8137-4624-980B-CE0B8CBFE43C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73954050-8137-4624-980B-CE0B8CBFE43C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73954050-8137-4624-980B-CE0B8CBFE43C}.Win64_Shipping_Client|Any CPU.ActiveCfg = Win64_Shipping_Client|Any CPU
+		{73954050-8137-4624-980B-CE0B8CBFE43C}.Win64_Shipping_Client|Any CPU.Build.0 = Win64_Shipping_Client|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E352C122-F375-49C6-9532-CAADAE6D6B65}
+	EndGlobalSection
+EndGlobal
