@@ -45,7 +45,7 @@ namespace SettlersForVillages.CampaignBehavior.Castle
 
             campaignGameSystemStarter.AddGameMenu(
                 CastleMilitiaMenu,
-                "The village spokesman says they can encourage some villagers to guard village",
+                "Order nearby villages to provide militia to your castle",
                 null
             );
 
@@ -111,7 +111,6 @@ namespace SettlersForVillages.CampaignBehavior.Castle
                 ) continue;
 
                 village.Settlement.MilitaParty.MemberRoster.KillNumberOfMenRandomly((int) militiaToAdd, false);
-                village.Settlement.ReadyMilitia -= militiaToAdd;
                 Settlement.CurrentSettlement.ReadyMilitia += militiaToAdd;
                 moved = true;
                 Logger.DisplayInfoMsg("Moved " + militiaToAdd + " militia from " + village.Name);
