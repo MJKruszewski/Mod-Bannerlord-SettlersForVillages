@@ -6,27 +6,43 @@ namespace SettlersForVillages
 {
     public static class Logger
     {
-        private static string LOGGING_PATH = "./../../Modules/SettlersForVillages/ErrorLogs/";
-        private static string FILEPATH = "./../../Modules/SettlersForVillages/ErrorLogs/Errors.log";
+        private static string LOGGING_PATH = "./../../Modules/SettlersForVillages/Logs/";
+        private static string FILE_ERROR_PATH = "./../../Modules/SettlersForVillages/Logs/Errors.log";
+        private static string FILE_PATH = "./../../Modules/SettlersForVillages/Logs/Debug.log";
 
         static Logger()
         {
             if (!Directory.Exists(LOGGING_PATH)) Directory.CreateDirectory(LOGGING_PATH);
-            if (!File.Exists(FILEPATH)) File.Create(FILEPATH);
+            if (!File.Exists(FILE_ERROR_PATH)) File.Create(FILE_ERROR_PATH);
+            if (!File.Exists(FILE_PATH)) File.Create(FILE_PATH);
         }
 
-        public static void log(string log)
+        public static void logDebug(string log)
         {
-            using (StreamWriter streamWriter = new StreamWriter(FILEPATH, true))
+            if (!Main.settings.DebugMode) return;
+            using (StreamWriter streamWriter = new StreamWriter(FILE_PATH, true))
+                streamWriter.WriteLine(log);
+
+            DisplayInfoMsg("DEBUG | " + log);
+        }
+
+        public static void logError(string log)
+        {
+            using (StreamWriter streamWriter = new StreamWriter(FILE_ERROR_PATH, true))
                 streamWriter.WriteLine(log);
         }
 
         public static void logError(Exception exception)
         {
-            log("Message " + exception.Message);
-            log("Error at " + exception.Source.ToString() + " in function " + exception.Message);
-            log("With stacktrace :\n" + exception.StackTrace);
-            log("----------------------------------------------------");
+            logError("Message " + exception.Message);
+            logError("Error at " + exception.Source.ToString() + " in function " + exception.Message);
+            logError("With stacktrace :\n" + exception.StackTrace);
+            logError("----------------------------------------------------");
+
+            if (!Main.settings.DebugMode) return;
+            DisplayInfoMsg(exception.Message);
+            DisplayInfoMsg(exception.Source);
+            DisplayInfoMsg(exception.StackTrace);
         }
 
         public static void DisplayInfoMsg(string message)
