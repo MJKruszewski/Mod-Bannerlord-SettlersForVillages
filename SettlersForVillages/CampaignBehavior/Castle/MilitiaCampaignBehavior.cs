@@ -34,9 +34,9 @@ namespace SettlersForVillages.CampaignBehavior.Castle
                 {
                     args.optionLeaveType = GameMenuOption.LeaveType.Recruit;
 
-                    return Campaign.Current.CurrentMenuContext.StringId != CastleMilitiaMenu &&
+                    return Campaign.Current.CurrentMenuContext.GameMenu.StringId != CastleMilitiaMenu &&
                            Settlement.CurrentSettlement.IsCastle &&
-                           (Main.settings.DebugMode || Settlement.CurrentSettlement.OwnerClan == Clan.PlayerClan);
+                           (Main.Settings.DebugMode || Settlement.CurrentSettlement.OwnerClan == Clan.PlayerClan);
                 },
                 args => { GameMenu.SwitchToMenu(CastleMilitiaMenu); },
                 false,

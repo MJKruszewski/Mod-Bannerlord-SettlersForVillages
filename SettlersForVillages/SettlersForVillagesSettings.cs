@@ -1,15 +1,40 @@
 ﻿using System.Xml.Serialization;
+using ModLib;
+using ModLib.Attributes;
 
 namespace SettlersForVillages
 {
-    public class SettlersForVillagesSettings
+    public class SettlersForVillagesSettings: SettingsBase
     {
-        [XmlElement] public int SettlersPriceMultiplier { get; set; } = 1;
+        public const string InstanceId = "SettlersForVillagesSettings";
 
-        [XmlElement] public int SettlersAmountMultiplier { get; set; } = 1;
+        public override string ModName => "SettlersForVillages";
+        public override string ModuleFolderName => "SettlersForVillages";
+        [XmlElement]
+        public override string ID { get; set; } = InstanceId;
+        
+        [XmlElement] 
+        [SettingProperty("Settlers price multiplier",1f,20f)]
+        public float SettlersPriceMultiplier { get; set; } = 1f;
 
-        [XmlElement] public int MilitiaPriceMultiplier { get; set; } = 1;
+        [XmlElement] 
+        [SettingProperty("Settlers amount multiplier",0.1f,10f)]
+        public float SettlersAmountMultiplier { get; set; } = 1f;
 
-        [XmlElement] public bool DebugMode { get; set; } = true;
+        [XmlElement] 
+        [SettingProperty("Militia price multiplier",1f,20f)]
+        public float MilitiaPriceMultiplier { get; set; } = 1f;
+        
+        [XmlElement] 
+        [SettingProperty("Ai enabled","Tells if mod enabled for AI")]
+        public bool AiEnabled { get; set; } = true;
+        
+        [XmlElement] 
+        [SettingProperty("Prosperity affection","Tells if settling new villagers affects prosperity of nearby town")]
+        public bool ProsperityAffection { get; set; } = true;
+
+        [XmlElement] 
+        [SettingProperty("Debug mode")]
+        public bool DebugMode { get; set; } = false;
     }
 }

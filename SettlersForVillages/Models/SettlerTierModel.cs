@@ -6,7 +6,7 @@
 
         public int GoldPrice
         {
-            get => _goldPrice * Main.settings.SettlersPriceMultiplier;
+            get => (int) (_goldPrice * Main.Settings.SettlersPriceMultiplier);
             set => _goldPrice = value;
         }
 
@@ -14,7 +14,7 @@
 
         public float VillagersToAdd
         {
-            get => _villagersToAdd * Main.settings.SettlersAmountMultiplier;
+            get => _villagersToAdd * Main.Settings.SettlersAmountMultiplier;
             set => _villagersToAdd = value;
         }
 

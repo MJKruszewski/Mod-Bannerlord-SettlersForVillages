@@ -25,7 +25,7 @@ namespace SettlersForVillages.CampaignBehavior.Village
         public override void RegisterEvents()
         {
             //Logic for player taxes
-            //CampaignEvents.DailyTickSettlementEvent.AddNonSerializedListener();
+            // CampaignEvents.DailyTickSettlementEvent.AddNonSerializedListener();
 
             //Ai logic
             CampaignEvents.AfterSettlementEntered.AddNonSerializedListener(this, AiBehaviour);
@@ -34,9 +34,9 @@ namespace SettlersForVillages.CampaignBehavior.Village
             CampaignEvents.OnSessionLaunchedEvent.AddNonSerializedListener(this, AddGameMenus);
         }
 
-        private void AiBehaviour(MobileParty mobileParty, Settlement settlement, Hero hero)
+        private static void AiBehaviour(MobileParty mobileParty, Settlement settlement, Hero hero)
         {
-            if (settlement == null || hero == null) return;
+            if (!Main.Settings.AiEnabled || settlement == null || hero == null) return;
 
             if (
                 !settlement.IsVillage
@@ -81,7 +81,7 @@ namespace SettlersForVillages.CampaignBehavior.Village
                 {
                     args.optionLeaveType = GameMenuOption.LeaveType.Manage;
 
-                    return Campaign.Current.CurrentMenuContext.StringId != VillageSettlersMenu &&
+                    return Campaign.Current.CurrentMenuContext.GameMenu.StringId != VillageSettlersMenu &&
                            Settlement.CurrentSettlement.IsVillage &&
                            Settlement.CurrentSettlement.OwnerClan == Clan.PlayerClan;
                 },
@@ -231,7 +231,7 @@ namespace SettlersForVillages.CampaignBehavior.Village
             GiveGoldAction.ApplyForCharacterToSettlement(hero, village.Settlement, goldPrice);
             village.Hearth += villagersToAdd;
 
-            if (village.MarketTown == null) return;
+            if (!Main.Settings.ProsperityAffection || village.MarketTown == null) return;
             village.MarketTown.Settlement.Prosperity -= villagersToAdd / 2;
             Logger.logDebug("Changed prosperity in " +
                             village.MarketTown.Name + " by " +

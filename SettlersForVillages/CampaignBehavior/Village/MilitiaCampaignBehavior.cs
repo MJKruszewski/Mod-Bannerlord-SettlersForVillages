@@ -35,7 +35,7 @@ namespace SettlersForVillages.CampaignBehavior.Village
                 {
                     args.optionLeaveType = GameMenuOption.LeaveType.Recruit;
 
-                    return Campaign.Current.CurrentMenuContext.StringId != VillageMilitiaMenu &&
+                    return Campaign.Current.CurrentMenuContext.GameMenu.StringId != VillageMilitiaMenu &&
                            Settlement.CurrentSettlement.IsVillage &&
                            Settlement.CurrentSettlement.OwnerClan == Clan.PlayerClan;
                 },

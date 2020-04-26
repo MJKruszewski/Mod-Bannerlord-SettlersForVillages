@@ -19,7 +19,7 @@ namespace SettlersForVillages
 
         public static void logDebug(string log)
         {
-            if (!Main.settings.DebugMode) return;
+            if (!Main.Settings.DebugMode) return;
             using (StreamWriter streamWriter = new StreamWriter(FILE_PATH, true))
                 streamWriter.WriteLine(log);
 
@@ -39,7 +39,7 @@ namespace SettlersForVillages
             logError("With stacktrace :\n" + exception.StackTrace);
             logError("----------------------------------------------------");
 
-            if (!Main.settings.DebugMode) return;
+            if (!Main.Settings.DebugMode) return;
             DisplayInfoMsg(exception.Message);
             DisplayInfoMsg(exception.Source);
             DisplayInfoMsg(exception.StackTrace);

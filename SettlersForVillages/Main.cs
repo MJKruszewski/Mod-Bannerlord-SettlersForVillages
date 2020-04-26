@@ -1,6 +1,5 @@
 ﻿using System;
-using System.IO;
-using System.Xml.Serialization;
+using ModLib;
 using SettlersForVillages.CampaignBehavior.Castle;
 using SettlersForVillages.CampaignBehavior.Village;
 using TaleWorlds.CampaignSystem;
@@ -11,8 +10,7 @@ namespace SettlersForVillages
 {
     public class Main : MBSubModuleBase
     {
-        public static SettlersForVillagesSettings settings;
-        private static string SETTINGS_PATH = "./../../Modules/SettlersForVillages/settings.xml";
+        public static SettlersForVillagesSettings Settings;
 
         protected override void OnGameStart(Game game, IGameStarter gameStarterObject)
         {
@@ -40,24 +38,11 @@ namespace SettlersForVillages
         {
             try
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(SettlersForVillagesSettings));
-                if (!File.Exists(SETTINGS_PATH))
-                {
-                    var stream = new FileStream(SETTINGS_PATH, FileMode.Create);
-                    serializer.Serialize(stream, new SettlersForVillagesSettings());
-                    stream.Close();
-                }
-
-                SettlersForVillagesSettings _settings;
-
-                using (Stream reader = new FileStream(SETTINGS_PATH, FileMode.Open))
-                {
-                    _settings = (SettlersForVillagesSettings) serializer.Deserialize(reader);
-                }
-
-                settings = _settings;
+                FileDatabase.Initialise("SettlersForVillages");
+                Settings = FileDatabase.Get<SettlersForVillagesSettings>(SettlersForVillagesSettings.InstanceId) ?? new SettlersForVillagesSettings();
+                SettingsDatabase.RegisterSettings(Settings);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Logger.logError(ex);
             }

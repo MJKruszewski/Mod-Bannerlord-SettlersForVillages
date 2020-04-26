@@ -6,7 +6,7 @@
 
         public int GoldPrice
         {
-            get => _goldPrice * Main.settings.MilitiaPriceMultiplier;
+            get => (int) (_goldPrice * Main.Settings.MilitiaPriceMultiplier);
             set => _goldPrice = value;
         }
 
