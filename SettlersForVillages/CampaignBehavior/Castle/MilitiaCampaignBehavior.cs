@@ -34,9 +34,13 @@ namespace SettlersForVillages.CampaignBehavior.Castle
                 {
                     args.optionLeaveType = GameMenuOption.LeaveType.Recruit;
 
-                    return Campaign.Current.CurrentMenuContext.GameMenu.StringId != CastleMilitiaMenu &&
-                           Settlement.CurrentSettlement.IsCastle &&
-                           (Main.Settings.DebugMode || Settlement.CurrentSettlement.OwnerClan == Clan.PlayerClan);
+                    return
+                        Campaign.Current.CurrentMenuContext != null &&
+                        Campaign.Current.CurrentMenuContext.GameMenu != null &&
+                        Campaign.Current.CurrentMenuContext.GameMenu.StringId != CastleMilitiaMenu &&
+                        Settlement.CurrentSettlement != null &&
+                        Settlement.CurrentSettlement.IsCastle &&
+                        (Main.Settings.DebugMode || Settlement.CurrentSettlement.OwnerClan == Clan.PlayerClan);
                 },
                 args => { GameMenu.SwitchToMenu(CastleMilitiaMenu); },
                 false,
@@ -45,7 +49,7 @@ namespace SettlersForVillages.CampaignBehavior.Castle
 
             campaignGameSystemStarter.AddGameMenu(
                 CastleMilitiaMenu,
-                "Order nearby villages to provide militia to your castle",
+                "Order nearby villages provide militia to your castle",
                 null
             );
 

@@ -20,7 +20,7 @@
 
         public string GetOptionText()
         {
-            return "Recruit " + MilitiaToAdd + " militia from peasants for " + GoldPrice + " denars";
+            return "Recruit " + MilitiaToAdd + " militia for " + GoldPrice + " denars";
         }
 
         public string GetOptionId()

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using SettlersForVillages.Models;
 using TaleWorlds.CampaignSystem;
-using TaleWorlds.CampaignSystem.Actions;
 using TaleWorlds.CampaignSystem.GameMenus;
+using TaleWorlds.SaveSystem;
 
 namespace SettlersForVillages.CampaignBehavior.Village
 {
@@ -11,7 +11,9 @@ namespace SettlersForVillages.CampaignBehavior.Village
     {
         public static readonly string TaxReliefText = "Tax relief for settlers";
         private static readonly string VillageSettlersMenu = "village_settlers_menu";
-        private static readonly Random Random = new Random();
+
+        public Dictionary<string, VillageDetailsModel> _settlersForVillagesData =
+            new Dictionary<string, VillageDetailsModel>();
 
         private static readonly List<SettlerTierModel> TierSettlersList = new List<SettlerTierModel>
         {
@@ -22,53 +24,28 @@ namespace SettlersForVillages.CampaignBehavior.Village
             new SettlerTierModel(20000, 100),
         };
 
+        private static readonly List<TaxReliefTierModel> TierTaxReliefList = new List<TaxReliefTierModel>
+        {
+            new TaxReliefTierModel(1, "10"),
+            new TaxReliefTierModel(2, "25"),
+            new TaxReliefTierModel(3, "50"),
+        };
+
+        public static SettlersCampaignBehavior Instance
+        {
+            get { return (SettlersCampaignBehavior) Campaign.Current.GetCampaignBehavior<SettlersCampaignBehavior>(); }
+        }
+
         public override void RegisterEvents()
         {
             //Logic for player taxes
-            // CampaignEvents.DailyTickSettlementEvent.AddNonSerializedListener();
+            CampaignEvents.DailyTickEvent.AddNonSerializedListener(this, Tax.TaxReliefDailyTick);
 
             //Ai logic
-            CampaignEvents.AfterSettlementEntered.AddNonSerializedListener(this, AiBehaviour);
+            CampaignEvents.AfterSettlementEntered.AddNonSerializedListener(this, Villagers.AiBehaviour);
 
             //Player menus
             CampaignEvents.OnSessionLaunchedEvent.AddNonSerializedListener(this, AddGameMenus);
-        }
-
-        private static void AiBehaviour(MobileParty mobileParty, Settlement settlement, Hero hero)
-        {
-            if (!Main.Settings.AiEnabled || settlement == null || hero == null) return;
-
-            if (
-                !settlement.IsVillage
-                || settlement.OwnerClan != hero.Clan
-                || hero == Hero.MainHero
-                || 10000 > hero.Gold
-            ) return;
-
-            var val = Random.Next(10000);
-            val += (hero.Gold / 1000);
-
-            if (5000 > val)
-            {
-                Logger.logDebug("Ai rolled less than 5000");
-                return;
-            }
-
-            if (5000 <= val && 8000 > val)
-            {
-                Logger.logDebug("Ai rolled 5000 <= val && 8000 > val");
-                AddVillagers(5000, 25f, hero, settlement.Village);
-            }
-            else if (8000 <= val && 9500 > val)
-            {
-                Logger.logDebug("Ai rolled 8000 <= val && 9500 > val");
-                AddVillagers(10000, 50f, hero, settlement.Village);
-            }
-            else if (9500 <= val)
-            {
-                Logger.logDebug("Ai rolled 9500 <= val");
-                AddVillagers(15000, 75f, hero, settlement.Village);
-            }
         }
 
         private void AddGameMenus(CampaignGameStarter campaignGameSystemStarter)
@@ -96,41 +73,52 @@ namespace SettlersForVillages.CampaignBehavior.Village
                 null
             );
 
-            AddTiers(campaignGameSystemStarter);
-            // AddTaxRelief(campaignGameSystemStarter);
+            AddSettlersMenu(campaignGameSystemStarter);
+            AddTaxReliefMenu(campaignGameSystemStarter);
             AddLeaveButtons(campaignGameSystemStarter);
         }
 
-        private static void AddTaxRelief(CampaignGameStarter campaignGameSystemStarter)
+        private static void AddTaxReliefMenu(CampaignGameStarter campaignGameSystemStarter)
         {
-            //todo
-            campaignGameSystemStarter.AddGameMenuOption(
-                VillageSettlersMenu,
-                "village_settlers_tax_relief_add",
-                "Introduce tax relief to encourage settlers",
-                args =>
-                {
-                    args.optionLeaveType = GameMenuOption.LeaveType.Trade;
-
-                    return FindTaxRelief() == null;
-                },
-                args =>
-                {
-                    try
+            foreach (var tier in TierTaxReliefList)
+            {
+                campaignGameSystemStarter.AddGameMenuOption(
+                    VillageSettlersMenu,
+                    "village_settlers_tax_relief_add_" + tier.Label,
+                    "Introduce " + tier.Label + "% tax relief",
+                    args =>
                     {
-                        Settlement.CurrentSettlement.Village.HearthChangeExplanation.AddLine(
-                            TaxReliefText,
-                            0.5f + (Settlement.CurrentSettlement.Village.MarketTown.Prosperity / 1000)
-                        );
+                        args.optionLeaveType = GameMenuOption.LeaveType.Trade;
 
-                        Logger.DisplayInfoMsg("Tax relief introduced in " + Settlement.CurrentSettlement.Name);
-                    }
-                    catch (Exception e)
+                        return false == Tax.FindTaxRelief();
+                    },
+                    args =>
                     {
-                        Logger.logError(e);
+                        try
+                        {
+                            if (Instance._settlersForVillagesData.TryGetValue(
+                                Settlement.CurrentSettlement.StringId, out var village))
+                            {
+                                village.TaxReliefTier = tier.TierEnum;
+                            }
+                            else
+                            {
+                                Instance._settlersForVillagesData.Add(
+                                    Settlement.CurrentSettlement.StringId,
+                                    new VillageDetailsModel(Settlement.CurrentSettlement.StringId, tier.TierEnum));
+                            }
+
+                            GameMenu.SwitchToMenu(VillageSettlersMenu);
+                            Logger.DisplayInfoMsg("Tax relief introduced in " + Settlement.CurrentSettlement.Name);
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.logError(e);
+                        }
                     }
-                }
-            );
+                );
+            }
+
 
             campaignGameSystemStarter.AddGameMenuOption(
                 VillageSettlersMenu,
@@ -140,14 +128,19 @@ namespace SettlersForVillages.CampaignBehavior.Village
                 {
                     args.optionLeaveType = GameMenuOption.LeaveType.Leave;
 
-                    return FindTaxRelief() != null;
+                    return Tax.FindTaxRelief();
                 },
                 args =>
                 {
                     try
                     {
-                        Settlement.CurrentSettlement.Village.HearthChangeExplanation.Lines.Remove(FindTaxRelief());
+                        if (Instance._settlersForVillagesData.TryGetValue(
+                            Settlement.CurrentSettlement.StringId, out var village))
+                        {
+                            village.TaxReliefTier = -1;
+                        }
 
+                        GameMenu.SwitchToMenu(VillageSettlersMenu);
                         Logger.DisplayInfoMsg("Tax relief canceled in " + Settlement.CurrentSettlement.Name);
                     }
                     catch (Exception e)
@@ -158,13 +151,7 @@ namespace SettlersForVillages.CampaignBehavior.Village
             );
         }
 
-        private static StatExplainer.ExplanationLine FindTaxRelief()
-        {
-            return Settlement.CurrentSettlement.Village.HearthChangeExplanation.Lines.Find((arg) =>
-                arg.Name == TaxReliefText);
-        }
-
-        private static void AddTiers(CampaignGameStarter campaignGameSystemStarter)
+        private static void AddSettlersMenu(CampaignGameStarter campaignGameSystemStarter)
         {
             foreach (var tier in TierSettlersList)
             {
@@ -182,7 +169,7 @@ namespace SettlersForVillages.CampaignBehavior.Village
                     {
                         try
                         {
-                            AddVillagers(tier.GoldPrice, tier.VillagersToAdd, Hero.MainHero,
+                            Villagers.Add(tier.GoldPrice, tier.VillagersToAdd, Hero.MainHero,
                                 Settlement.CurrentSettlement.Village);
                         }
                         catch (Exception e)
@@ -209,37 +196,33 @@ namespace SettlersForVillages.CampaignBehavior.Village
             );
         }
 
-        private static void AddVillagers(int goldPrice, float villagersToAdd, Hero hero,
-            TaleWorlds.CampaignSystem.Village village)
-        {
-            if (goldPrice > Hero.MainHero.Gold)
-            {
-                if (hero == Hero.MainHero) Logger.DisplayInfoMsg("Not enough denars to encourage settlers");
-                Logger.logDebug("Not enough gold - " + hero.Name);
-                return;
-            }
-
-            if (
-                village.MarketTown != null
-                && villagersToAdd >= village.MarketTown.Prosperity
-            )
-            {
-                if (hero == Hero.MainHero) Logger.DisplayInfoMsg("Not enough settlers in town");
-                return;
-            }
-
-            GiveGoldAction.ApplyForCharacterToSettlement(hero, village.Settlement, goldPrice);
-            village.Hearth += villagersToAdd;
-
-            if (!Main.Settings.ProsperityAffection || village.MarketTown == null) return;
-            village.MarketTown.Settlement.Prosperity -= villagersToAdd / 2;
-            Logger.logDebug("Changed prosperity in " +
-                            village.MarketTown.Name + " by " +
-                            villagersToAdd / 2);
-        }
-
         public override void SyncData(IDataStore dataStore)
         {
+            dataStore.SyncData("settlersForVillagesData", ref _settlersForVillagesData);
+
+            if (Main.Settings.DeleteMode)
+            {
+                Logger.logDebug("Removing " + _settlersForVillagesData.Count + " entries");
+                _settlersForVillagesData.Clear();
+            }
+        }
+    }
+
+    public class CustomSaveDefiner : SaveableTypeDefiner
+    {
+        public CustomSaveDefiner() : base(902003041)
+        {
+        }
+
+        protected override void DefineClassTypes()
+        {
+            // The Id's here are local and will be related to the Id passed to the constructor
+            AddClassDefinition(typeof(VillageDetailsModel), 1);
+        }
+
+        protected override void DefineContainerDefinitions()
+        {
+            ConstructContainerDefinition(typeof(Dictionary<string, VillageDetailsModel>));
         }
     }
 }

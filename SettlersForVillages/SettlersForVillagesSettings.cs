@@ -24,6 +24,14 @@ namespace SettlersForVillages
         [XmlElement] 
         [SettingProperty("Militia price multiplier",1f,20f)]
         public float MilitiaPriceMultiplier { get; set; } = 1f;
+
+        [XmlElement] 
+        [SettingProperty("Settlement limitation enabled", "Max calls for settlers per day for village enabled")]
+        public bool MaxCallsForSettlersPerDayForVillageEnabled { get; set; } = false;
+        
+        [XmlElement] 
+        [SettingProperty("Settlement limitation", 1, 100, "Max calls for settlers per day for village enabled")]
+        public int MaxCallsForSettlersPerDayForVillage { get; set; } = 3;
         
         [XmlElement] 
         [SettingProperty("Ai enabled","Tells if mod enabled for AI")]
@@ -36,5 +44,9 @@ namespace SettlersForVillages
         [XmlElement] 
         [SettingProperty("Debug mode")]
         public bool DebugMode { get; set; } = false;
+
+        [XmlElement] 
+        [SettingProperty("Delete mod data", "In case if you want remove mod, and dont want break your saves, check this, load and save game, then remove mod")]
+        public bool DeleteMode { get; set; } = false;
     }
 }
