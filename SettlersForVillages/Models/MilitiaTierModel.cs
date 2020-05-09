@@ -20,7 +20,7 @@
 
         public string GetOptionText()
         {
-            return "Recruit " + MilitiaToAdd + " militia for " + GoldPrice + " denars";
+            return Main.Localization.GetTranslation(Localization.MilitiaMenuTiers, MilitiaToAdd, GoldPrice);
         }
 
         public string GetOptionId()

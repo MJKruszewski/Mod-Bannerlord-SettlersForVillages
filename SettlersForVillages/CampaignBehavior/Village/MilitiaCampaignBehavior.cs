@@ -30,7 +30,7 @@ namespace SettlersForVillages.CampaignBehavior.Village
             campaignGameSystemStarter.AddGameMenuOption(
                 "village",
                 "village_militia_rec_menu_button",
-                "Recruit to militia",
+                Main.Localization.GetTranslation(Localization.MilitiaMenuVillage),
                 args =>
                 {
                     args.optionLeaveType = GameMenuOption.LeaveType.Recruit;
@@ -46,7 +46,7 @@ namespace SettlersForVillages.CampaignBehavior.Village
 
             campaignGameSystemStarter.AddGameMenu(
                 VillageMilitiaMenu,
-                "The village spokesman says they can encourage some villagers to guard village, they will be ready to serve tomorrow",
+                Main.Localization.GetTranslation(Localization.MilitiaMenuVillageDescription),
                 null
             );
 
@@ -88,7 +88,7 @@ namespace SettlersForVillages.CampaignBehavior.Village
             campaignGameSystemStarter.AddGameMenuOption(
                 VillageMilitiaMenu,
                 "village_militia_rec_leave",
-                "Leave",
+                Main.Localization.GetTranslation(Localization.MenuLeave),
                 args =>
                 {
                     args.optionLeaveType = GameMenuOption.LeaveType.Leave;
@@ -102,13 +102,13 @@ namespace SettlersForVillages.CampaignBehavior.Village
         {
             if (goldPrice > Hero.MainHero.Gold)
             {
-                Logger.DisplayInfoMsg("Not enough denars to recruit militia");
+                Logger.DisplayInfoMsg(Main.Localization.GetTranslation(Localization.MilitiaActionLackOfGold));
                 return;
             }
 
             if (militiaToAdd >= Settlement.CurrentSettlement.Village.Hearth)
             {
-                Logger.DisplayInfoMsg("Not enough villagers");
+                Logger.DisplayInfoMsg(Main.Localization.GetTranslation(Localization.MilitiaActionLackOfVillagers));
                 return;
             }
 

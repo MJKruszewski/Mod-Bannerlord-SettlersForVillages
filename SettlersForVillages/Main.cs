@@ -1,5 +1,6 @@
 ﻿using System;
-using ModLib;
+using System.IO;
+using System.Xml.Serialization;
 using SettlersForVillages.CampaignBehavior.Castle;
 using SettlersForVillages.CampaignBehavior.Village;
 using TaleWorlds.CampaignSystem;
@@ -10,7 +11,8 @@ namespace SettlersForVillages
 {
     public class Main : MBSubModuleBase
     {
-        public static SettlersForVillagesSettings Settings;
+        public static SettlersForVillagesSettings Settings = new SettlersForVillagesSettings();
+        public static Localization Localization = new Localization();
 
         protected override void OnGameStart(Game game, IGameStarter gameStarterObject)
         {
@@ -38,11 +40,35 @@ namespace SettlersForVillages
         {
             try
             {
-                FileDatabase.Initialise("SettlersForVillages");
-                Settings = FileDatabase.Get<SettlersForVillagesSettings>(SettlersForVillagesSettings.InstanceId) ?? new SettlersForVillagesSettings();
-                SettingsDatabase.RegisterSettings(Settings);
+                XmlSerializer serializer = new XmlSerializer(typeof(LocalizationConfiguration));
+                Stream fs = new FileStream("./../../Modules/SettlersForVillages/language.xml", FileMode.Open);
+
+                LocalizationConfiguration localizationConfiguration =
+                    (LocalizationConfiguration) serializer.Deserialize(fs);
+                fs.Close();
+
+
+                serializer = new XmlSerializer(typeof(LocalizationObject[]));
+                fs = new FileStream("./../../Modules/SettlersForVillages/i18n/EN.xml", FileMode.Open);
+
+                foreach (var localizationObject in ((LocalizationObject[]) serializer.Deserialize(fs)))
+                {
+                    Localization.DefaultDictionary.Add(localizationObject.id, localizationObject.translation);
+                }
+
+                fs.Close();
+
+                fs = new FileStream(
+                    "./../../Modules/SettlersForVillages/i18n/" + localizationConfiguration.LanguageCode + ".xml",
+                    FileMode.Open);
+                foreach (var localizationObject in ((LocalizationObject[]) serializer.Deserialize(fs)))
+                {
+                    Localization.Dictionary.Add(localizationObject.id, localizationObject.translation);
+                }
+
+                fs.Close();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Logger.logError(ex);
             }

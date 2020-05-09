@@ -8,13 +8,15 @@ namespace SettlersForVillages.CampaignBehavior.Village
     public static class Tax
     {
         private static readonly Random Random = new Random();
+
         public static bool FindTaxRelief()
         {
             try
             {
-                return Settlement.CurrentSettlement != null 
+                return Settlement.CurrentSettlement != null
                        && Settlement.CurrentSettlement.StringId != null
-                       && SettlersCampaignBehavior.Instance._settlersForVillagesData.TryGetValue(Settlement.CurrentSettlement.StringId, out var village) 
+                       && SettlersCampaignBehavior.Instance._settlersForVillagesData.TryGetValue(
+                           Settlement.CurrentSettlement.StringId, out var village)
                        && village.TaxReliefTier != -1;
             }
             catch (KeyNotFoundException e)
@@ -29,7 +31,7 @@ namespace SettlersForVillages.CampaignBehavior.Village
         {
             float settled = 0f;
             int goldTaken = 0;
-            
+
             foreach (var detailsModel in SettlersCampaignBehavior.Instance._settlersForVillagesData)
             {
                 detailsModel.Value.SettlementToday = 0;
@@ -41,7 +43,7 @@ namespace SettlersForVillages.CampaignBehavior.Village
 
                 Settlement settlement =
                     Settlement.FindFirst((args) => args.StringId == detailsModel.Value.SettlementId);
-                
+
                 if (settlement == null)
                 {
                     Logger.logDebug("Settlement " + detailsModel.Value.SettlementId + " not found");
@@ -51,11 +53,11 @@ namespace SettlersForVillages.CampaignBehavior.Village
 
                 var village = settlement.Village;
                 var tax = detailsModel.Value.TaxReliefAmount();
-                
+
                 var villagersToAdd = (tax / Random.Next(5, 25)) / Random.Next(1, 10);
                 goldTaken += (int) tax;
                 settled += villagersToAdd;
-                
+
                 village.Hearth += villagersToAdd;
                 GiveGoldAction.ApplyForCharacterToSettlement(Hero.MainHero, settlement, (int) tax, true);
 
@@ -68,7 +70,8 @@ namespace SettlersForVillages.CampaignBehavior.Village
 
             if (goldTaken != 0f || settled != 0f)
             {
-                Logger.DisplayInfoMsg((int) settled + " settlers moved to villages, for tax relief in amount of " + goldTaken);
+                Logger.DisplayInfoMsg(Main.Localization.GetTranslation(Localization.SettlersActionTaxMigration,
+                    (int) settled, goldTaken));
             }
         }
     }

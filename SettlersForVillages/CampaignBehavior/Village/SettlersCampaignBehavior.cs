@@ -9,7 +9,6 @@ namespace SettlersForVillages.CampaignBehavior.Village
 {
     class SettlersCampaignBehavior : CampaignBehaviorBase
     {
-        public static readonly string TaxReliefText = "Tax relief for settlers";
         private static readonly string VillageSettlersMenu = "village_settlers_menu";
 
         public Dictionary<string, VillageDetailsModel> _settlersForVillagesData =
@@ -50,32 +49,39 @@ namespace SettlersForVillages.CampaignBehavior.Village
 
         private void AddGameMenus(CampaignGameStarter campaignGameSystemStarter)
         {
-            campaignGameSystemStarter.AddGameMenuOption(
-                "village",
-                "village_settlers_menu_button",
-                "Encourage settlers",
-                args =>
-                {
-                    args.optionLeaveType = GameMenuOption.LeaveType.Manage;
+            try
+            {
+                campaignGameSystemStarter.AddGameMenuOption(
+                    "village",
+                    "village_settlers_menu_button",
+                    Main.Localization.GetTranslation(Localization.SettlersMenu),
+                    args =>
+                    {
+                        args.optionLeaveType = GameMenuOption.LeaveType.Manage;
 
-                    return Campaign.Current.CurrentMenuContext.GameMenu.StringId != VillageSettlersMenu &&
-                           Settlement.CurrentSettlement.IsVillage &&
-                           Settlement.CurrentSettlement.OwnerClan == Clan.PlayerClan;
-                },
-                args => { GameMenu.SwitchToMenu(VillageSettlersMenu); },
-                false,
-                4
-            );
+                        return Campaign.Current.CurrentMenuContext.GameMenu.StringId != VillageSettlersMenu &&
+                               Settlement.CurrentSettlement.IsVillage &&
+                               Settlement.CurrentSettlement.OwnerClan == Clan.PlayerClan;
+                    },
+                    args => { GameMenu.SwitchToMenu(VillageSettlersMenu); },
+                    false,
+                    4
+                );
 
-            campaignGameSystemStarter.AddGameMenu(
-                VillageSettlersMenu,
-                "The village spokesman says they can encourage townsmen and nearby villages to provide you a settlers",
-                null
-            );
+                campaignGameSystemStarter.AddGameMenu(
+                    VillageSettlersMenu,
+                    Main.Localization.GetTranslation(Localization.SettlersMenuDescription),
+                    null
+                );
 
-            AddSettlersMenu(campaignGameSystemStarter);
-            AddTaxReliefMenu(campaignGameSystemStarter);
-            AddLeaveButtons(campaignGameSystemStarter);
+                AddSettlersMenu(campaignGameSystemStarter);
+                AddTaxReliefMenu(campaignGameSystemStarter);
+                AddLeaveButtons(campaignGameSystemStarter);
+            }
+            catch (Exception e)
+            {
+                Logger.logError(e);
+            }
         }
 
         private static void AddTaxReliefMenu(CampaignGameStarter campaignGameSystemStarter)
@@ -85,7 +91,7 @@ namespace SettlersForVillages.CampaignBehavior.Village
                 campaignGameSystemStarter.AddGameMenuOption(
                     VillageSettlersMenu,
                     "village_settlers_tax_relief_add_" + tier.Label,
-                    "Introduce " + tier.Label + "% tax relief",
+                    Main.Localization.GetTranslation(Localization.SettlersMenuTaxIntroduce, tier.Label),
                     args =>
                     {
                         args.optionLeaveType = GameMenuOption.LeaveType.Trade;
@@ -109,7 +115,8 @@ namespace SettlersForVillages.CampaignBehavior.Village
                             }
 
                             GameMenu.SwitchToMenu(VillageSettlersMenu);
-                            Logger.DisplayInfoMsg("Tax relief introduced in " + Settlement.CurrentSettlement.Name);
+                            Logger.DisplayInfoMsg(Main.Localization.GetTranslation(
+                                Localization.SettlersActionTaxIntroduce, Settlement.CurrentSettlement.Name));
                         }
                         catch (Exception e)
                         {
@@ -123,7 +130,7 @@ namespace SettlersForVillages.CampaignBehavior.Village
             campaignGameSystemStarter.AddGameMenuOption(
                 VillageSettlersMenu,
                 "village_settlers_tax_relief_remove",
-                "Cancel tax relief",
+                Main.Localization.GetTranslation(Localization.SettlersMenuTaxCancel),
                 args =>
                 {
                     args.optionLeaveType = GameMenuOption.LeaveType.Leave;
@@ -141,7 +148,8 @@ namespace SettlersForVillages.CampaignBehavior.Village
                         }
 
                         GameMenu.SwitchToMenu(VillageSettlersMenu);
-                        Logger.DisplayInfoMsg("Tax relief canceled in " + Settlement.CurrentSettlement.Name);
+                        Logger.DisplayInfoMsg(Main.Localization.GetTranslation(Localization.SettlersActionTaxCancel,
+                            Settlement.CurrentSettlement.Name));
                     }
                     catch (Exception e)
                     {
@@ -186,7 +194,7 @@ namespace SettlersForVillages.CampaignBehavior.Village
             campaignGameSystemStarter.AddGameMenuOption(
                 VillageSettlersMenu,
                 "village_settlers_leave",
-                "Leave",
+                Main.Localization.GetTranslation(Localization.MenuLeave),
                 args =>
                 {
                     args.optionLeaveType = GameMenuOption.LeaveType.Leave;

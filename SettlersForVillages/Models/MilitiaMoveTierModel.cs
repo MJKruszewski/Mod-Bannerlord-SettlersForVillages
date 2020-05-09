@@ -11,7 +11,7 @@
 
         public string GetOptionText()
         {
-            return "Move " + MilitiaToAdd + " militia from villages";
+            return Main.Localization.GetTranslation(Localization.MilitiaMenuMove, MilitiaToAdd);
         }
 
         public string GetOptionId()

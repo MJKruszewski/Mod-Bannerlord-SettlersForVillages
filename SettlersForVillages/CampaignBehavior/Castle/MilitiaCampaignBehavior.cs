@@ -29,7 +29,7 @@ namespace SettlersForVillages.CampaignBehavior.Castle
             campaignGameSystemStarter.AddGameMenuOption(
                 "castle",
                 "village_militia_rec_menu_button",
-                "Move militia to castle",
+                Main.Localization.GetTranslation(Localization.MilitiaMenuCastle),
                 args =>
                 {
                     args.optionLeaveType = GameMenuOption.LeaveType.Recruit;
@@ -49,7 +49,7 @@ namespace SettlersForVillages.CampaignBehavior.Castle
 
             campaignGameSystemStarter.AddGameMenu(
                 CastleMilitiaMenu,
-                "Order nearby villages provide militia to your castle",
+                Main.Localization.GetTranslation(Localization.MilitiaMenuCastleDescription),
                 null
             );
 
@@ -91,7 +91,7 @@ namespace SettlersForVillages.CampaignBehavior.Castle
             campaignGameSystemStarter.AddGameMenuOption(
                 CastleMilitiaMenu,
                 "castle_militia_rec_leave",
-                "Leave",
+                Main.Localization.GetTranslation(Localization.MenuLeave),
                 args =>
                 {
                     args.optionLeaveType = GameMenuOption.LeaveType.Leave;
@@ -117,14 +117,15 @@ namespace SettlersForVillages.CampaignBehavior.Castle
                 village.Settlement.MilitaParty.MemberRoster.KillNumberOfMenRandomly((int) militiaToAdd, false);
                 Settlement.CurrentSettlement.ReadyMilitia += militiaToAdd;
                 moved = true;
-                Logger.DisplayInfoMsg("Moved " + militiaToAdd + " militia from " + village.Name);
+                Logger.DisplayInfoMsg(Main.Localization.GetTranslation(Localization.MilitiaActionMove, militiaToAdd,
+                    village.Name));
 
                 break;
             }
 
             if (!moved)
             {
-                Logger.DisplayInfoMsg("Not enough trained and prepared militia in villages");
+                Logger.DisplayInfoMsg(Main.Localization.GetTranslation(Localization.MilitiaActionMoveLackOfVillagers));
             }
         }
 

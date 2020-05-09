@@ -13,18 +13,23 @@ namespace SettlersForVillages.CampaignBehavior.Village
         {
             if (goldPrice > Hero.MainHero.Gold)
             {
-                if (hero == Hero.MainHero) Logger.DisplayInfoMsg("Not enough denars to encourage settlers");
+                if (hero == Hero.MainHero)
+                    Logger.DisplayInfoMsg(Main.Localization.GetTranslation(Localization.SettlersActionLackOfGold));
                 Logger.logDebug("Not enough gold - " + hero.Name);
                 return;
             }
 
             if (hero == Hero.MainHero && Main.Settings.MaxCallsForSettlersPerDayForVillageEnabled)
             {
-                if (SettlersCampaignBehavior.Instance._settlersForVillagesData.ContainsKey(Settlement.CurrentSettlement.StringId))
+                if (SettlersCampaignBehavior.Instance._settlersForVillagesData.ContainsKey(Settlement.CurrentSettlement
+                    .StringId))
                 {
-                    if (SettlersCampaignBehavior.Instance._settlersForVillagesData[Settlement.CurrentSettlement.StringId].SettlementToday >= Main.Settings.MaxCallsForSettlersPerDayForVillage)
+                    if (SettlersCampaignBehavior.Instance
+                            ._settlersForVillagesData[Settlement.CurrentSettlement.StringId].SettlementToday >=
+                        Main.Settings.MaxCallsForSettlersPerDayForVillage)
                     {
-                        Logger.DisplayInfoMsg("Too many calls for settlers, wait until tomorrow...");
+                        Logger.DisplayInfoMsg(
+                            Main.Localization.GetTranslation(Localization.SettlersActionTooManyCalls));
 
                         return;
                     }
@@ -36,7 +41,8 @@ namespace SettlersForVillages.CampaignBehavior.Village
                 && villagersToAdd >= village.MarketTown.Prosperity
             )
             {
-                if (hero == Hero.MainHero) Logger.DisplayInfoMsg("Not enough settlers in town");
+                if (hero == Hero.MainHero)
+                    Logger.DisplayInfoMsg(Main.Localization.GetTranslation(Localization.SettlersActionLackOfSettlers));
                 return;
             }
 
@@ -45,15 +51,19 @@ namespace SettlersForVillages.CampaignBehavior.Village
 
             if (hero == Hero.MainHero && Main.Settings.MaxCallsForSettlersPerDayForVillageEnabled)
             {
-                if (SettlersCampaignBehavior.Instance._settlersForVillagesData.ContainsKey(Settlement.CurrentSettlement.StringId))
+                if (SettlersCampaignBehavior.Instance._settlersForVillagesData.ContainsKey(Settlement.CurrentSettlement
+                    .StringId))
                 {
-                    SettlersCampaignBehavior.Instance._settlersForVillagesData[Settlement.CurrentSettlement.StringId].SettlementToday++;
+                    SettlersCampaignBehavior.Instance._settlersForVillagesData[Settlement.CurrentSettlement.StringId]
+                        .SettlementToday++;
                 }
                 else
                 {
-                    SettlersCampaignBehavior.Instance._settlersForVillagesData.Add(Settlement.CurrentSettlement.StringId,
+                    SettlersCampaignBehavior.Instance._settlersForVillagesData.Add(
+                        Settlement.CurrentSettlement.StringId,
                         new VillageDetailsModel(Settlement.CurrentSettlement.StringId, -1));
-                    SettlersCampaignBehavior.Instance._settlersForVillagesData[Settlement.CurrentSettlement.StringId].SettlementToday++;
+                    SettlersCampaignBehavior.Instance._settlersForVillagesData[Settlement.CurrentSettlement.StringId]
+                        .SettlementToday++;
                 }
             }
 
@@ -63,8 +73,8 @@ namespace SettlersForVillages.CampaignBehavior.Village
                             village.MarketTown.Name + " by " +
                             villagersToAdd / 2);
         }
-        
-        
+
+
         public static void AiBehaviour(MobileParty mobileParty, Settlement settlement, Hero hero)
         {
             if (!Main.Settings.AiEnabled || settlement == null || hero == null) return;

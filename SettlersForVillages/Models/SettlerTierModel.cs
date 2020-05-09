@@ -26,7 +26,7 @@
 
         public string GetOptionText()
         {
-            return "Settle " + VillagersToAdd + " villagers for " + GoldPrice + " denars";
+            return Main.Localization.GetTranslation(Localization.SettlersMenuTiers, VillagersToAdd, GoldPrice);
         }
 
         public string GetOptionId()

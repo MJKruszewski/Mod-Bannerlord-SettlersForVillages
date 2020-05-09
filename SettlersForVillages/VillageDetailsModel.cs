@@ -25,8 +25,9 @@ namespace SettlersForVillages
         public float TaxReliefBaseValue()
         {
             var self = GetSelf();
-         
-            return Campaign.Current.Models.SettlementTaxModel.CalculateVillageTaxFromIncome(self.Village, self.Village.TradeTaxAccumulated) 
+
+            return Campaign.Current.Models.SettlementTaxModel.CalculateVillageTaxFromIncome(self.Village,
+                       self.Village.TradeTaxAccumulated)
                    / Campaign.Current.Models.SettlementTaxModel.GetVillageTaxRatio();
         }
 
