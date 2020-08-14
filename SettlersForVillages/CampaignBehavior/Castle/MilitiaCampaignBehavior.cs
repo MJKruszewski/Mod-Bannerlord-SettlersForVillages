@@ -26,35 +26,42 @@ namespace SettlersForVillages.CampaignBehavior.Castle
 
         private void AddGameMenus(CampaignGameStarter campaignGameSystemStarter)
         {
-            campaignGameSystemStarter.AddGameMenuOption(
-                "castle",
-                "village_militia_rec_menu_button",
-                Main.Localization.GetTranslation(Localization.MilitiaMenuCastle),
-                args =>
-                {
-                    args.optionLeaveType = GameMenuOption.LeaveType.Recruit;
+            try
+            {
+                campaignGameSystemStarter.AddGameMenuOption(
+                    "castle",
+                    "village_militia_rec_menu_button",
+                    Main.Localization.GetTranslation(Localization.MilitiaMenuCastle),
+                    args =>
+                    {
+                        args.optionLeaveType = GameMenuOption.LeaveType.Recruit;
 
-                    return
-                        Campaign.Current.CurrentMenuContext != null &&
-                        Campaign.Current.CurrentMenuContext.GameMenu != null &&
-                        Campaign.Current.CurrentMenuContext.GameMenu.StringId != CastleMilitiaMenu &&
-                        Settlement.CurrentSettlement != null &&
-                        Settlement.CurrentSettlement.IsCastle &&
-                        (Main.Settings.DebugMode || Settlement.CurrentSettlement.OwnerClan == Clan.PlayerClan);
-                },
-                args => { GameMenu.SwitchToMenu(CastleMilitiaMenu); },
-                false,
-                4
-            );
+                        return
+                            Campaign.Current.CurrentMenuContext != null &&
+                            Campaign.Current.CurrentMenuContext.GameMenu != null &&
+                            Campaign.Current.CurrentMenuContext.GameMenu.StringId != CastleMilitiaMenu &&
+                            Settlement.CurrentSettlement != null &&
+                            Settlement.CurrentSettlement.IsCastle &&
+                            (Main.Settings.DebugMode || Settlement.CurrentSettlement.OwnerClan == Clan.PlayerClan);
+                    },
+                    args => { GameMenu.SwitchToMenu(CastleMilitiaMenu); },
+                    false,
+                    4
+                );
 
-            campaignGameSystemStarter.AddGameMenu(
-                CastleMilitiaMenu,
-                Main.Localization.GetTranslation(Localization.MilitiaMenuCastleDescription),
-                null
-            );
+                campaignGameSystemStarter.AddGameMenu(
+                    CastleMilitiaMenu,
+                    Main.Localization.GetTranslation(Localization.MilitiaMenuCastleDescription),
+                    null
+                );
 
-            AddTiers(campaignGameSystemStarter);
-            AddLeaveButtons(campaignGameSystemStarter);
+                AddTiers(campaignGameSystemStarter);
+                AddLeaveButtons(campaignGameSystemStarter);
+            }
+            catch (Exception e)
+            {
+                Logger.logError(e);
+            }
         }
 
         private static void AddTiers(CampaignGameStarter campaignGameSystemStarter)
@@ -115,7 +122,7 @@ namespace SettlersForVillages.CampaignBehavior.Castle
                 ) continue;
 
                 village.Settlement.MilitaParty.MemberRoster.KillNumberOfMenRandomly((int) militiaToAdd, false);
-                Settlement.CurrentSettlement.ReadyMilitia += militiaToAdd;
+                Settlement.CurrentSettlement.Militia += militiaToAdd;
                 moved = true;
                 Logger.DisplayInfoMsg(Main.Localization.GetTranslation(Localization.MilitiaActionMove, militiaToAdd,
                     village.Name));

@@ -27,31 +27,38 @@ namespace SettlersForVillages.CampaignBehavior.Village
 
         private void AddGameMenus(CampaignGameStarter campaignGameSystemStarter)
         {
-            campaignGameSystemStarter.AddGameMenuOption(
-                "village",
-                "village_militia_rec_menu_button",
-                Main.Localization.GetTranslation(Localization.MilitiaMenuVillage),
-                args =>
-                {
-                    args.optionLeaveType = GameMenuOption.LeaveType.Recruit;
+            try
+            {
+                campaignGameSystemStarter.AddGameMenuOption(
+                    "village",
+                    "village_militia_rec_menu_button",
+                    Main.Localization.GetTranslation(Localization.MilitiaMenuVillage),
+                    args =>
+                    {
+                        args.optionLeaveType = GameMenuOption.LeaveType.Recruit;
 
-                    return Campaign.Current.CurrentMenuContext.GameMenu.StringId != VillageMilitiaMenu &&
-                           Settlement.CurrentSettlement.IsVillage &&
-                           Settlement.CurrentSettlement.OwnerClan == Clan.PlayerClan;
-                },
-                args => { GameMenu.SwitchToMenu(VillageMilitiaMenu); },
-                false,
-                4
-            );
+                        return Campaign.Current.CurrentMenuContext.GameMenu.StringId != VillageMilitiaMenu &&
+                               Settlement.CurrentSettlement.IsVillage &&
+                               Settlement.CurrentSettlement.OwnerClan == Clan.PlayerClan;
+                    },
+                    args => { GameMenu.SwitchToMenu(VillageMilitiaMenu); },
+                    false,
+                    4
+                );
 
-            campaignGameSystemStarter.AddGameMenu(
-                VillageMilitiaMenu,
-                Main.Localization.GetTranslation(Localization.MilitiaMenuVillageDescription),
-                null
-            );
+                campaignGameSystemStarter.AddGameMenu(
+                    VillageMilitiaMenu,
+                    Main.Localization.GetTranslation(Localization.MilitiaMenuVillageDescription),
+                    null
+                );
 
-            AddTiers(campaignGameSystemStarter);
-            AddLeaveButtons(campaignGameSystemStarter);
+                AddTiers(campaignGameSystemStarter);
+                AddLeaveButtons(campaignGameSystemStarter);
+            }
+            catch (Exception e)
+            {
+                Logger.logError(e);
+            }
         }
 
         private static void AddTiers(CampaignGameStarter campaignGameSystemStarter)
@@ -114,7 +121,7 @@ namespace SettlersForVillages.CampaignBehavior.Village
 
             GiveGoldAction.ApplyForCharacterToSettlement(Hero.MainHero, Settlement.CurrentSettlement, goldPrice);
             Settlement.CurrentSettlement.Village.Hearth -= militiaToAdd;
-            Settlement.CurrentSettlement.ReadyMilitia += militiaToAdd;
+            Settlement.CurrentSettlement.Militia += militiaToAdd;
         }
 
         public override void SyncData(IDataStore dataStore)

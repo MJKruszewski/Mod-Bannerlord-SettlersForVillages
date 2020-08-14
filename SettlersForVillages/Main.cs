@@ -27,6 +27,8 @@ namespace SettlersForVillages
                     (CampaignBehaviorBase) new MilitiaCampaignBehavior());
                 ((CampaignGameStarter) gameStarterObject).AddBehavior(
                     (CampaignBehaviorBase) new CastleMilitiaCampaignBehavior());
+                
+                Settings = SettlersForVillagesSettings.Instance;
             }
             catch (Exception ex)
             {
